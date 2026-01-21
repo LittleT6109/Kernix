@@ -1,0 +1,21 @@
+# venv folders
+bin
+include
+lib
+lib64
+share
+
+# old files
+*.old
+
+# blacklist
+.bot_hash
+guild_config.json
+levels.json
+
+# python
+pyvenv.cfg
+**/__pycache__/
+
+# .env
+.env
