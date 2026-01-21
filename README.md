@@ -24,6 +24,6 @@ Almost everything is optional. Here is a list of all features:
 - Autorole
 - Moderation commands soon to come!
 
-## Owner Contact
+## Support
 
-For support, DM @littlet6109 on Discord, or create an issue thread on the github
+For support, DM @littlet6109 on Discord, join the Discord server: https://discord.gg/Rbc6NQ22C8 , or create an issue thread on the Github
