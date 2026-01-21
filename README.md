@@ -26,4 +26,4 @@ Almost everything is optional. Here is a list of all features:
 
 ## Owner Contact
 
-For support, DM @littlet6109 on Discord, or create an issue thread
+For support, DM @littlet6109 on Discord, or create an issue thread on the github
