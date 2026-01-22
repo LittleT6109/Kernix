@@ -298,5 +298,43 @@ class Moderation(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"Failed to unban: {e}", ephemeral=True)
 
+    # kick
+    @app_commands.command(name="kick", description="Kicks a member from the server")
+    @app_commands.describe(user="The user to kick", reason="Reason for the kick")
+    async def kick_cmd(self, interaction: discord.Interaction, user: discord.Member, reason: str = "No reason provided"):
+        cfg = self.get_guild_config(interaction.guild.id)
+        if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
+            return await interaction.response.send_message(
+                "You don’t have permission to use this command.",
+                ephemeral=True
+            )
+        if user == interaction.user:
+            return await interaction.response.send_message(
+                "You can't kick yourself!",
+                ephemeral=True
+            )
+        if user.bot:
+            return await interaction.response.send_message(
+                "You cannot kick bots!",
+                ephemeral=True
+            )
+        try:
+            await interaction.guild.kick(user, reason=f"{reason} (by {interaction.user})")
+            await self.send_log(
+                interaction.guild.id,
+                title="Member Kicked",
+                description=f"{user.mention} was kicked by {interaction.user.mention}\nReason: {reason}",
+                user=user,
+                color=discord.Color.orange()
+            )
+            await interaction.response.send_message(f"{user} was kicked!")
+        except discord.Forbidden:
+            await interaction.response.send_message(
+                "I don’t have permission to kick that member!",
+                ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to kick: {e}", ephemeral=True)
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(Moderation(bot))
