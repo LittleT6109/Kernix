@@ -12,6 +12,7 @@ share
 .bot_hash
 guild_config.json
 levels.json
+mutes.json
 
 # python
 pyvenv.cfg
