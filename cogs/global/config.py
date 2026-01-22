@@ -45,15 +45,20 @@ class ConfigMenu(discord.ui.View):
 class ConfigOptionSelect(discord.ui.Select):
     def __init__(self, cog, guild):
         options = [
-            discord.SelectOption(label="Set Welcome Channel", description="Pick a channel for welcomes"),
-            discord.SelectOption(label="Set Welcome Messages", description="Edit the welcome messages"),
-            discord.SelectOption(label="Set Autorole", description="Pick a role for new members"),
-            discord.SelectOption(label="Toggle Logging", description="Enable/Disable logging"),
-            discord.SelectOption(label="Set Log Channel", description="Pick the channel for logs"),
-            discord.SelectOption(label="Set Mod Roles", description="Pick roles for moderators"),
-            discord.SelectOption(label="Toggle Leveling", description="Enable/Disable leveling"),
-            discord.SelectOption(label="Set Level Roles", description="Assign roles unlocked at levels")
+            discord.SelectOption(label="Toggle Welcome Messages", value="toggle_welcome"),
+            discord.SelectOption(label="Set Welcome Channel", value="set_welcome_channel"),
+            discord.SelectOption(label="Set Welcome Messages", value="set_welcome_messages"),
+            discord.SelectOption(label="Toggle Autorole", value="toggle_autorole"),
+            discord.SelectOption(label="Set Autorole", value="set_autorole"),
+            discord.SelectOption(label="Toggle Logging", value="toggle_logging"),
+            discord.SelectOption(label="Set Log Channel", value="set_log_channel"),
+            discord.SelectOption(label="Toggle Mod Action Logging", value="toggle_mod_logging"),
+            discord.SelectOption(label="Set Mod Action Log Channel", value="set_mod_channel"),
+            discord.SelectOption(label="Set Mod Roles", value="set_mod_roles"),
+            discord.SelectOption(label="Toggle Leveling", value="toggle_leveling"),
+            discord.SelectOption(label="Set Level Roles", value="set_level_roles"),
         ]
+
         super().__init__(placeholder="Choose an option...", options=options, min_values=1, max_values=1)
         self.cog = cog
         self.guild = guild
@@ -62,61 +67,104 @@ class ConfigOptionSelect(discord.ui.Select):
         guild_id = str(interaction.guild.id)
         if guild_id not in self.cog.bot.guild_config:
             self.cog.bot.guild_config[guild_id] = {
+                "welcome_status": False,
                 "welcome_channel": None,
                 "welcome_messages": [],
+                "autorole_status": False,
                 "autorole": None,
                 "logging_status": False,
                 "log_channel": None,
+                "mod_logging_status": False,
+                "mod_channel": None,
                 "mod_roles": [],
-                "leveling_enabled": False,
+                "leveling_status": False,
                 "level_roles": {}
             }
+            self.cog.save_config()
 
         choice = self.values[0]
 
-        if choice == "Set Welcome Channel":
+        if choice == "toggle_welcome":
+            await interaction.response.send_message(
+                "Toggle Welcomes:",
+                view=ToggleView(self.cog, guild_id, "welcome_status"),
+                ephemeral=True
+            )
+        elif choice == "set_welcome_channel":
             await interaction.response.send_message(
                 "Select the welcome channel:",
                 view=ChannelSelectView(self.cog, guild_id, key="welcome_channel"),
                 ephemeral=True
             )
-        elif choice == "Set Welcome Messages":
-            await interaction.response.send_modal(WelcomeMessagesModal(self.cog, guild_id))
-        elif choice == "Set Autorole":
+        elif choice == "set_welcome_messages":
+            await interaction.response.send_modal(
+                ConfigModal(
+                self.cog,
+                guild_id,
+                title="Welcome Messages",
+                label="One per line, use {user} to mention the user",
+                placeholder="Hello there {user}!",
+                step="welcome_messages"
+            )
+        )
+        elif choice == "toggle_autorole":
+            await interaction.response.send_message(
+                "Toggle Autorole:",
+                view=ToggleView(self.cog, guild_id, "autorole_status"),
+                ephemeral=True
+            )
+        elif choice == "set_autorole":
             await interaction.response.send_message(
                 "Select the autorole:",
                 view=RoleSelectView(self.cog, guild_id, "autorole"),
                 ephemeral=True
             )
-        elif choice == "Toggle Logging":
+        elif choice == "toggle_logging":
             await interaction.response.send_message(
                 "Toggle logging:",
                 view=ToggleView(self.cog, guild_id, "logging_status"),
                 ephemeral=True
             )
-        elif choice == "Set Log Channel":
+        elif choice == "set_log_channel":
             await interaction.response.send_message(
                 "Select the log channel:",
                 view=ChannelSelectView(self.cog, guild_id, key="log_channel"),
                 ephemeral=True
             )
-        elif choice == "Set Mod Roles":
+        elif choice == "toggle_mod_logging":
+            await interaction.response.send_message(
+                "Toggle mod action logging:",
+                view=ToggleView(self.cog, guild_id, "mod_logging_status"),
+                ephemeral=True
+            )
+        elif choice == "set_mod_channel":
+            await interaction.response.send_message(
+                "Select the log channel",
+                view=ChannelSelectView(self.cog, guild_id, "mod_channel"),
+                ephemeral=True
+            )
+        elif choice == "set_mod_roles":
             await interaction.response.send_message(
                 "Select mod roles:",
                 view=RoleSelectView(self.cog, guild_id, "mod_roles", multiple=True),
                 ephemeral=True
             )
-        elif choice == "Toggle Leveling":
+        elif choice == "toggle_leveling":
             await interaction.response.send_message(
                 "Toggle leveling system:",
-                view=ToggleView(self.cog, guild_id, "leveling_enabled"),
+                view=ToggleView(self.cog, guild_id, "leveling_status"),
                 ephemeral=True
             )
-        elif choice == "Set Level Roles":
-            await interaction.response.send_message(
-                "Pick a role for a level:",
-                view=LevelRoleSetupView(self.cog, guild_id),
-                ephemeral=True
+        elif choice == "set_level_roles":
+            await interaction.response.send_modal(
+                ConfigModal(
+                    self.cog,
+                    guild_id,
+                    title="Level Roles",
+                    label="One per line, format: <level>: <role mention>",
+                    placeholder="5: @Image Perms",
+                    step="level_roles"
+                )
             )
 
 # done button
@@ -140,6 +188,7 @@ class ChannelSelectView(discord.ui.View):
 class ChannelSelect(discord.ui.Select):
     def __init__(self, cog, guild_id, key):
         options = [discord.SelectOption(label=c.name, value=str(c.id)) for c in cog.bot.get_guild(int(guild_id)).channels if isinstance(c, discord.TextChannel)]
+        options = options[:25]
         super().__init__(placeholder="Pick a channel...", options=options)
         self.cog = cog
         self.guild_id = guild_id
@@ -152,31 +201,50 @@ class ChannelSelect(discord.ui.Select):
         await interaction.response.send_message(f"✅ {self.key.replace('_',' ').title()} set.", ephemeral=True)
         self.view.stop()
 
-# welcome message
-class WelcomeMessagesModal(discord.ui.Modal, title="Welcome Messages"):
-    messages = discord.ui.TextInput(
-        label="Enter welcome messages separated by new lines",
-        style=discord.TextStyle.paragraph,
-        placeholder="Use {user} to mention new members. Type 'skip' to leave empty."
-    )
-
-    def __init__(self, cog, guild_id):
-        super().__init__()
+class ConfigModal(discord.ui.Modal):
+    def __init__(self, cog, guild_id, *, title, label, placeholder, step):
+        super().__init__(title=title)
         self.cog = cog
         self.guild_id = guild_id
+        self.step = step
+
+        self.messages = discord.ui.TextInput(
+            label=label,
+            style=discord.TextStyle.paragraph,
+            placeholder=placeholder
+        )
+        self.add_item(self.messages)
 
     async def on_submit(self, interaction: discord.Interaction):
-        # if user typed skip, set to empty list
-        if self.messages.value.strip().lower() == "skip":
-            self.cog.bot.guild_config[self.guild_id]["welcome_messages"] = []
+        value = self.messages.value.strip()
+
+        if value.lower() == "skip":
+            self.cog.bot.guild_config[self.guild_id][self.step] = [] if self.step == "welcome_messages" else {}
             saved_count = 0
         else:
-            self.cog.bot.guild_config[self.guild_id]["welcome_messages"] = self.messages.value.splitlines()
-            saved_count = len(self.messages.value.splitlines())
+            lines = value.splitlines()
+            if self.step == "welcome_messages":
+                self.cog.bot.guild_config[self.guild_id][self.step] = lines
+                saved_count = len(lines)
+            elif self.step == "level_roles":
+                data = {}
+                for line in lines:
+                    if ":" not in line:
+                        continue
+                    level, role = line.split(":", 1)
+
+                    role_id = int(role.strip().replace("<@&", "").replace(">", ""))
+                    data[int(level.strip())] = role_id
+
+                self.cog.bot.guild_config[self.guild_id][self.step] = data
+                saved_count = len(data)
 
         self.cog.save_config()
+
         await interaction.response.send_message(
-            f"✅ Welcome messages saved ({saved_count} messages).", ephemeral=True)
+            f"✅ Saved {saved_count} entries for {self.step.replace('_',' ')}.",
+            ephemeral=True
+        )
 
 # role selection
 class RoleSelectView(discord.ui.View):
@@ -191,7 +259,8 @@ class RoleSelectView(discord.ui.View):
 class RoleSelect(discord.ui.Select):
     def __init__(self, cog, guild_id, key, multiple=False):
         options = [discord.SelectOption(label=r.name, value=str(r.id)) for r in cog.bot.get_guild(int(guild_id)).roles if not r.is_default()]
-        super().__init__(placeholder="Pick role(s)...", options=options, min_values=1, max_values=len(options) if multiple else 1)
+        options = options[:25]
+        super().__init__(placeholder="Pick role(s)...", options=options, min_values=1, max_values=len(options) if multiple and options else 1)
         self.cog = cog
         self.guild_id = guild_id
         self.key = key
@@ -228,37 +297,6 @@ class ToggleView(discord.ui.View):
         self.cog.save_config()
         await interaction.response.send_message(f"✅ {self.key.replace('_',' ').title()} disabled", ephemeral=True)
         self.stop()
-
-# level roles selection
-class LevelRoleSetupView(discord.ui.View):
-    def __init__(self, cog, guild_id):
-        super().__init__(timeout=None)
-        self.cog = cog
-        self.guild_id = guild_id
-        self.add_item(LevelRoleSelect(cog, guild_id))
-
-class LevelRoleSelect(discord.ui.Select):
-    def __init__(self, cog, guild_id):
-        guild = cog.bot.get_guild(int(guild_id))
-        options = [discord.SelectOption(label=r.name, value=str(r.id)) for r in guild.roles if not r.is_default()]
-        super().__init__(placeholder="Pick a role to assign to a level...", options=options)
-        self.cog = cog
-        self.guild_id = guild_id
-
-    async def callback(self, interaction: discord.Interaction):
-        role_id = int(self.values[0])
-        await interaction.response.send_message(
-            "Enter the level number for this role in chat:", ephemeral=True
-        )
-
-        def check(m: discord.Message):
-            return m.author.id == interaction.user.id and m.channel == interaction.channel and m.content.isdigit()
-
-        msg = await self.cog.bot.wait_for("message", check=check)
-        level = msg.content
-        self.cog.bot.guild_config[self.guild_id]["level_roles"][level] = role_id
-        self.cog.save_config()
-        await interaction.followup.send(f"✅ Role <@&{role_id}> assigned to level {level}", ephemeral=True)
 
 # cog setup
 async def setup(bot: commands.Bot):
