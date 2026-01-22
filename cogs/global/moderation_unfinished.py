@@ -227,3 +227,76 @@ class Moderation(commands.Cog):
                 "I don’t have permission to remove that role!",
                 ephemeral=True
             )
+
+    # ban
+    @app_commands.command(name="ban", description="Bans a member from the server")
+    @app_commands.describe(user="The user to ban", reason="Reason for the ban")
+    async def ban_cmd(self, interaction: discord.Interaction, user: discord.Member, reason: str = "No reason provided"):
+        cfg = self.get_guild_config(interaction.guild.id)
+        if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
+            return await interaction.response.send_message(
+                "You don’t have permission to use this command.",
+                ephemeral=True
+            )
+        if user == interaction.user:
+            return await interaction.response.send_message(
+                "You can't ban yourself!",
+                ephemeral=True
+            )
+        if user.bot:
+            return await interaction.response.send_message(
+                "You cannot ban bots!",
+                ephemeral=True
+            )
+        try:
+            await interaction.guild.ban(user, reason=f"{reason} (by {interaction.user})")
+            await self.send_log(
+                interaction.guild.id,
+                title="Member Banned",
+                description=f"{user.mention} was banned by {interaction.user.mention}\nReason: {reason}",
+                user=user,
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(f"{user} was banned! 🚫")
+        except discord.Forbidden:
+            await interaction.response.send_message(
+                "I don’t have permission to ban that member!",
+                ephemeral=True
+            )
+
+    # unban
+    @app_commands.command(name="unban", description="Unbans a member from the server")
+    @app_commands.describe(user_id="The ID of the user to unban")
+    async def unban_cmd(self, interaction: discord.Interaction, user_id: str):
+        cfg = self.get_guild_config(interaction.guild.id)
+        if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
+            return await interaction.response.send_message(
+                "You don’t have permission to use this command.",
+                ephemeral=True
+            )
+        try:
+            banned_users = await interaction.guild.bans()
+            user_id_int = int(user_id)
+            user = next((entry.user for entry in banned_users if entry.user.id == user_id_int), None)
+            if not user:
+                return await interaction.response.send_message(f"No banned user with ID {user_id} found.", ephemeral=True)
+
+            await interaction.guild.unban(user, reason=f"Unbanned by {interaction.user}")
+            await self.send_log(
+                interaction.guild.id,
+                title="Member Unbanned",
+                description=f"{user.mention} was unbanned by {interaction.user.mention}",
+                user=user,
+                color=discord.Color.green()
+            )
+            await interaction.response.send_message(f"{user} was unbanned successfully! ✅")
+        except discord.Forbidden:
+            await interaction.response.send_message(
+                "I don’t have permission to unban members!",
+                ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to unban: {e}", ephemeral=True)
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Moderation(bot))
