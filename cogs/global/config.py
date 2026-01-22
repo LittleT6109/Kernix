@@ -55,6 +55,7 @@ class ConfigOptionSelect(discord.ui.Select):
             discord.SelectOption(label="Toggle Mod Action Logging", value="toggle_mod_logging"),
             discord.SelectOption(label="Set Mod Action Log Channel", value="set_mod_channel"),
             discord.SelectOption(label="Set Mod Roles", value="set_mod_roles"),
+            discord.SelectOption(label="Set Mute Role", value="set_mute_role"),
             discord.SelectOption(label="Toggle Leveling", value="toggle_leveling"),
             discord.SelectOption(label="Set Level Roles", value="set_level_roles"),
         ]
@@ -77,6 +78,7 @@ class ConfigOptionSelect(discord.ui.Select):
                 "mod_logging_status": False,
                 "mod_channel": None,
                 "mod_roles": [],
+                "mute_role": None,
                 "leveling_status": False,
                 "level_roles": {}
             }
@@ -147,6 +149,12 @@ class ConfigOptionSelect(discord.ui.Select):
             await interaction.response.send_message(
                 "Select mod roles:",
                 view=RoleSelectView(self.cog, guild_id, "mod_roles", multiple=True),
+                ephemeral=True
+            )
+        elif choice == "set_mute_role":
+            await interaction.response.send_message(
+                "Select mute role:",
+                view=RoleSelectView(self.cog, guild_id, "mute_role", multiple=True),
                 ephemeral=True
             )
         elif choice == "toggle_leveling":
