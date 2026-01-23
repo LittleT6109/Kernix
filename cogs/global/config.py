@@ -154,7 +154,7 @@ class ConfigOptionSelect(discord.ui.Select):
         elif choice == "set_mute_role":
             await interaction.response.send_message(
                 "Select mute role:",
-                view=RoleSelectView(self.cog, guild_id, "mute_role", multiple=True),
+                view=RoleSelectView(self.cog, guild_id, "mute_role"),
                 ephemeral=True
             )
         elif choice == "toggle_leveling":
