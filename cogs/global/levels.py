@@ -50,6 +50,9 @@ class Levels(commands.Cog):
         cfg = self.bot.get_guild_config(message.guild.id)
         if not cfg.get("leveling_enabled"):
             return
+        mute_role_id = cfg.get("mute_role")
+        if mute_role_id and mute_role_id in [role.id for role in message.author.roles]:
+            return
 
         gid = str(message.guild.id)
         uid = str(message.author.id)
@@ -65,7 +68,7 @@ class Levels(commands.Cog):
         needed = self.get_next_level_xp(profile["level"])
         if profile["xp"] >= needed:
             profile["level"] += 1
-            profile["xp"] -= needed
+            profile["xp"] = 0  # reset XP on level up
             await message.channel.send(f"🎉 {message.author.mention} reached **Level {profile['level']}**!")
 
             for lvl, role_id in cfg.get("level_roles", {}).items():
