@@ -14,7 +14,9 @@ MUTE_FILE = Path("mutes.json")
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        asyncio.create_task(self._mute_checker())
+
+    async def cog_load(self):
+        self.mute_task = asyncio.create_task(self._mute_checker())
 
     def _load_mutes(self):
         if not MUTE_FILE.exists():
@@ -33,6 +35,7 @@ class Moderation(commands.Cog):
         user_id = str(user_id)
         data.setdefault(guild_id, {})[user_id] = unmute_at
         self._save_mutes(data)
+        print("Saving mute:", guild_id, user_id, minutes)
 
     async def _mute_checker(self):
         await self.bot.wait_until_ready()
@@ -47,7 +50,7 @@ class Moderation(commands.Cog):
                     continue
 
                 cfg = self.get_guild_config(guild.id)
-                mute_role_id = cfg.get("muterole")
+                mute_role_id = cfg.get("mute_role")
                 mute_role = guild.get_role(mute_role_id) if mute_role_id else None
 
                 for user_id, unmute_at in list(users.items()):
