@@ -156,7 +156,7 @@ class Moderation(commands.Cog):
                 ephemeral=True
             )
 
-        role = interaction.guild.get_role(cfg.get("muterole"))
+        role = interaction.guild.get_role(cfg.get("mute_role"))
         if not role:
             return await interaction.response.send_message(
                 "No mute role has been set for this guild!",
