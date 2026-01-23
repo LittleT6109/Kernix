@@ -189,7 +189,7 @@ class Moderation(commands.Cog):
                 ephemeral=True
             )
 
-        role = interaction.guild.get_role(cfg.get("muterole"))
+        role = interaction.guild.get_role(cfg.get("mute_role"))
         if not role:
             return await interaction.response.send_message(
                 "No mute role has been set for this guild!",
@@ -270,33 +270,32 @@ class Moderation(commands.Cog):
     async def unban_cmd(self, interaction: discord.Interaction, user_id: str):
         cfg = self.get_guild_config(interaction.guild.id)
         if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
-            return await interaction.response.send_message(
-                "You don’t have permission to use this command.",
-                ephemeral=True
-            )
+            return await interaction.response.send_message("You don’t have permission to use this command.", ephemeral=True)
+
         try:
-            banned_users = await interaction.guild.bans()
-            user_id_int = int(user_id)
-            user = next((entry.user for entry in banned_users if entry.user.id == user_id_int), None)
+            user_id = int(user_id)
+            user = None
+
+            async for entry in interaction.guild.bans():
+                if entry.user.id == user_id: user = entry.user; break
+
             if not user:
                 return await interaction.response.send_message(f"No banned user with ID {user_id} found.", ephemeral=True)
 
             await interaction.guild.unban(user, reason=f"Unbanned by {interaction.user}")
-            await self.send_log(
-                interaction.guild.id,
-                title="Member Unbanned",
+            await self.send_log(interaction.guild.id, title="Member Unbanned",
                 description=f"{user.mention} was unbanned by {interaction.user.mention}",
-                user=user,
-                color=discord.Color.green()
+                user=user, color=discord.Color.green()
             )
             await interaction.response.send_message(f"{user} was unbanned successfully! ✅")
+
+        except ValueError:
+            await interaction.response.send_message("That’s not a valid user ID.", ephemeral=True)
         except discord.Forbidden:
-            await interaction.response.send_message(
-                "I don’t have permission to unban members!",
-                ephemeral=True
-            )
+            await interaction.response.send_message("I don’t have permission to unban members!", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"Failed to unban: {e}", ephemeral=True)
+
 
     # kick
     @app_commands.command(name="kick", description="Kicks a member from the server")
