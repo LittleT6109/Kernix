@@ -104,4 +104,7 @@ async def main():
 
 # start bot
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+    	print(f"\nBot shutting down")
