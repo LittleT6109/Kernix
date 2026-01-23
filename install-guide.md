@@ -17,9 +17,10 @@ Go to the OAuth2 section in the left sidebar. Choose "bot" in the scopes section
 ## Starting the bot
 You will need python installed. 
 ### Pip dependencies:
+- discord.py
 - pillow
-- aiohttp
 - python-dotenv
+You can install these with `pip install <package-name>`
 
 ### Running the bot
 You can either double click the bot.py file, or navigate to the bot directory in your terminal and run it with `python3 bot.py` (`python bot.py` on windows)
