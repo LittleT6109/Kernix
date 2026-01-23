@@ -20,6 +20,7 @@ You will need python installed.
 - discord.py
 - pillow
 - python-dotenv
+- requests
 
 You can install these with `pip install <package-name>`
 
