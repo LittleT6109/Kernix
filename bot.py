@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import os
 import time
 
+DEV_MODE = Path("./.dev").exists()
+
 INTENTS = discord.Intents.default()
 INTENTS.message_content = True
 INTENTS.members = True
@@ -41,6 +43,7 @@ def get_guild_config(guild_id: int):
 bot.get_guild_config = get_guild_config
 
 async def load_cogs():
+    global DEV_MODE
     if not COGS_DIR.exists():
         print("⚠️ No cogs directory found")
         return
@@ -76,6 +79,11 @@ async def sync_commands():
     except Exception as e:
         print(f"❌ Failed to sync global commands: {e}")
 
+    # cancel guild commands sync if dev mode
+    if DEV_MODE:
+        print("❌ Skipping guild command sync (dev mode)")
+        return
+
     # sync guild commands
     try:
         guild_obj = discord.Object(id=GUILD_ID)
@@ -95,6 +103,10 @@ async def on_ready():
     # start background tasks
     asyncio.create_task(sync_commands())
     asyncio.create_task(message_log())
+
+    # set presence
+    activity = discord.Activity(type=discord.ActivityType.watching, name="github.com/LittleT6109/Kernix")
+    await bot.change_presence(activity=activity)
 
 # load cogs
 async def main():
