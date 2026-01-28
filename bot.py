@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 import time
 
-DEV_MODE = Path("./.dev").exists()
+DEV_MODE = Path("./.ignore-guild-specific-cmds").exists()
 
 INTENTS = discord.Intents.default()
 INTENTS.message_content = True
@@ -79,9 +79,9 @@ async def sync_commands():
     except Exception as e:
         print(f"❌ Failed to sync global commands: {e}")
 
-    # cancel guild commands sync if dev mode
+    # cancel guild commands sync if not Kernix
     if DEV_MODE:
-        print("❌ Skipping guild command sync (dev mode)")
+        print("❌ Skipping guild command sync (Non-Kernix)")
         return
 
     # sync guild commands
