@@ -30,12 +30,23 @@ class Moderation(commands.Cog):
 
     def _add_mute(self, guild_id, user_id, minutes):
         data = self._load_mutes()
-        unmute_at = int(time.time() + minutes * 60)
         guild_id = str(guild_id)
         user_id = str(user_id)
-        data.setdefault(guild_id, {})[user_id] = unmute_at
+
+        unmute_at = int(time.time() + minutes * 60)
+
+        guild_data = data.setdefault(guild_id, {})
+        user_data = guild_data.get(user_id, {})
+
+        times_muted = user_data.get("times_muted", 0) + 1
+
+        guild_data[user_id] = {
+            "unmute_at": unmute_at,
+            "times_muted": times_muted
+        }
+
         self._save_mutes(data)
-        print("Saving mute:", guild_id, user_id, minutes)
+        print(f"Saving mute: {guild_id=} {user_id=} times_muted={times_muted}")
 
     async def _mute_checker(self):
         await self.bot.wait_until_ready()
@@ -53,7 +64,10 @@ class Moderation(commands.Cog):
                 mute_role_id = cfg.get("mute_role")
                 mute_role = guild.get_role(mute_role_id) if mute_role_id else None
 
-                for user_id, unmute_at in list(users.items()):
+                for user_id, info in list(users.items()):
+                    unmute_at = info.get("unmute_at")
+                    if unmute_at is None:
+                        continue
                     if now < unmute_at:
                         continue
 
@@ -79,11 +93,9 @@ class Moderation(commands.Cog):
                         except Exception as e:
                             print(f"❌ Failed to remove mute role: {e}")
 
-                    del data[guild_id][user_id]
+                    data[guild_id][user_id]["unmute_at"] = None
                     changed = True
 
-                if not data[guild_id]:
-                    del data[guild_id]
 
             if changed:
                 self._save_mutes(data)
@@ -147,29 +159,43 @@ class Moderation(commands.Cog):
     @app_commands.command(name="mute", description="Mutes a member for a specified amount of time")
     @app_commands.describe(user="The user to mute", minutes="Time until mute expires (in minutes)")
     async def mute_cmd(self, interaction: discord.Interaction, user: discord.Member, minutes: int):
+        await interaction.response.defer(ephemeral=True)
         cfg = self.get_guild_config(interaction.guild.id)
-        if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
-            return await interaction.response.send_message(
+        member = interaction.guild.get_member(interaction.user.id)
+        if not member:
+            member = await interaction.guild.fetch_member(interaction.user.id)
+        if not any(r.id in cfg.get("mod_roles", []) for r in member.roles):
+            return await interaction.followup.send(
                 "You don’t have permission to use this command.",
                 ephemeral=True
             )
         if user.bot:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 "You cannot mute bots!",
                 ephemeral=True
             )
 
         role = interaction.guild.get_role(cfg.get("mute_role"))
         if not role:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 "No mute role has been set for this guild!",
+                ephemeral=True
+            )
+
+        if role in user.roles:
+            return await interaction.followup.send(
+                f"{user} is already muted.",
                 ephemeral=True
             )
 
         await user.add_roles(role)
         if cfg.get("mod_logging_status"):
-            ts = int(time.time())
-            description = f"{user.mention} was muted by {interaction.user.mention} for {minutes} minutes at <t:{ts}:F>"
+            data = self._load_mutes()
+            guild_data = data.get(str(interaction.guild.id), {})
+            user_data = guild_data.get(str(user.id), {})
+
+            count = user_data.get("times_muted", 0) + 1
+            description = f"{user.mention} was muted by {interaction.user.mention} for {minutes}\nTimes muted: {count}"
             await self.send_log(
                 interaction.guild.id,
                 title="Member Muted",
@@ -179,28 +205,29 @@ class Moderation(commands.Cog):
             )
 
         self._add_mute(interaction.guild.id, user.id, minutes)
-        await interaction.response.send_message(f"{user} was muted for {minutes} minutes!")
+        await interaction.followup.send(f"{user} was muted for {minutes} minutes!")
 
     # unmute
     @app_commands.command(name="unmute", description="Unmutes a member manually")
     @app_commands.describe(user="The user to unmute")
     async def unmute_cmd(self, interaction: discord.Interaction, user: discord.Member):
+        await interaction.response.defer(ephemeral=True)
         cfg = self.get_guild_config(interaction.guild.id)
         if not any(r.id in cfg.get("mod_roles", []) for r in interaction.user.roles):
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 "You don’t have permission to use this command.",
                 ephemeral=True
             )
 
         role = interaction.guild.get_role(cfg.get("mute_role"))
         if not role:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 "No mute role has been set for this guild!",
                 ephemeral=True
             )
 
         if role not in user.roles:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 f"{user} isn’t muted.",
                 ephemeral=True
             )
@@ -219,14 +246,12 @@ class Moderation(commands.Cog):
             guild_id = str(interaction.guild.id)
             user_id = str(user.id)
             if guild_id in data and user_id in data[guild_id]:
-                del data[guild_id][user_id]
-                if not data[guild_id]:
-                    del data[guild_id]
+                data[guild_id][user_id]["unmute_at"] = None
                 self._save_mutes(data)
 
-            await interaction.response.send_message(f"{user} was unmuted successfully!")
+            await interaction.followup.send(f"{user} was unmuted successfully!")
         except discord.Forbidden:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "I don’t have permission to remove that role!",
                 ephemeral=True
             )
