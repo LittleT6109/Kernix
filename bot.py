@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 import os
 import time
 
-DEV_MODE = Path("./.ignore-guild-specific-cmds").exists()
-
 INTENTS = discord.Intents.default()
 INTENTS.message_content = True
 INTENTS.members = True
@@ -20,20 +18,6 @@ bot = commands.Bot(
 )
 
 COGS_DIR = Path("./cogs")
-
-# startup logs guild (the Kernix Discord server)
-GUILD_ID = 1440424449861226700
-
-# send startup log
-async def message_log():
-    await bot.wait_until_ready()
-    channel = bot.get_channel(1461371585419280526)
-    ts = int(time.time())
-    if channel:
-        try:
-            await channel.send(f"Bot started at <t:{ts}:F>")
-        except Exception as e:
-            print(f"❌ Failed to send start message: {e}")
 
 bot.guild_config = {}
 
@@ -67,10 +51,9 @@ async def load_cogs():
             except Exception as e:
                 print(f"❌ Failed to load {ext}: {e}")
 
-# sync
+# sync commands
 async def sync_commands():
     await bot.wait_until_ready()
-    # sync global commands
     try:
         await asyncio.wait_for(bot.tree.sync(), timeout=10)
         print("✅ Global commands synced")
@@ -78,26 +61,6 @@ async def sync_commands():
         print("⚠️ Global command sync timed out")
     except Exception as e:
         print(f"❌ Failed to sync global commands: {e}")
-
-    # cancel guild commands sync if not Kernix
-    if DEV_MODE:
-        print("❌ Skipping guild command sync (Non-Kernix)")
-        return
-
-    # sync guild commands
-    for ext_name, cog in bot.cogs.items():
-        guild_id = getattr(cog, "GUILD_ID", None)
-        if guild_id is None:
-            continue
-
-        try:
-            guild_obj = discord.Object(id=guild_id)
-            await asyncio.wait_for(bot.tree.sync(guild=guild_obj), timeout=10)
-            print(f"✅ Commands synced for cog {ext_name} in guild {guild_id}")
-        except asyncio.TimeoutError:
-            print(f"⚠️ Command sync timed out for cog {ext_name} in guild {guild_id}")
-        except Exception as e:
-            print(f"❌ Failed to sync commands for cog {ext_name} in guild {guild_id}: {e}")
 
 @bot.event
 async def on_ready():
@@ -110,7 +73,7 @@ async def on_ready():
     asyncio.create_task(message_log())
 
     # set presence
-    activity = discord.Activity(type=discord.ActivityType.watching, name="github.com/LittleT6109/Kernix")
+    activity = discord.Activity(type=discord.ActivityType.watching, name="github.com/LittleT6109/Kernix") # CHANGE THIS TO WHAT YOU WANT YOUR BOT TO DISPLAY
     await bot.change_presence(activity=activity)
 
 # load cogs
