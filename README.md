@@ -22,7 +22,8 @@ Almost everything is optional. Here is a list of all features:
 - Many kinds of logging: Edits/Deletes, Nickname changes, Username changes, Invite creation, Joining/Leaving
 - Custom welcome messages
 - Autorole
-- Moderation commands soon to come!
+- Moderation commands
+- Reaction roles
 
 ## Support
 
