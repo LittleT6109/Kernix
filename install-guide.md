@@ -36,10 +36,6 @@ On some Linux distros, you will need a venv to prevent breaking system packages.
 
 You can install these with `pip install <package-name>`
 
-### Removing Kernix-only cogs
-
-You can remove the guild-specific folder from the cogs folder entirely, these are for Kernix only.
-
 ### Running the bot
 
 if you do not need a venv:
