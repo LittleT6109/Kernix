@@ -27,7 +27,6 @@ class ReactionRoles(commands.Cog):
     @app_commands.command(name="reactionrole", description="Create a reaction role message")
     @app_commands.describe(
         channel="Channel to send the message in",
-        message="Message text",
         emoji1="First emoji",
         role1="First role",
         emoji2="Second emoji (optional)",
@@ -53,7 +52,6 @@ class ReactionRoles(commands.Cog):
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
-        message: str,
         emoji1: str,
         role1: discord.Role,
         emoji2: str = None,
@@ -93,7 +91,10 @@ class ReactionRoles(commands.Cog):
         if not pairs:
             return await interaction.followup.send("You must provide at least one emoji and role pair.")
 
-        msg = await channel.send(message)
+        lines = [f"{e} → {r.mention}" for e, r in pairs]
+        content = "**React to get a role:**\n\n" + "\n".join(lines)
+
+        msg = await channel.send(content, allowed_mentions=discord.AllowedMentions.none())
 
         for emoji, _ in pairs:
             try:
