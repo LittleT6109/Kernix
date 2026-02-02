@@ -85,14 +85,19 @@ async def sync_commands():
         return
 
     # sync guild commands
-    try:
-        guild_obj = discord.Object(id=GUILD_ID)
-        await asyncio.wait_for(bot.tree.sync(guild=guild_obj), timeout=10)
-        print(f"✅ Commands synced for guild {GUILD_ID}")
-    except asyncio.TimeoutError:
-        print(f"⚠️ Guild command sync timed out for {GUILD_ID}")
-    except Exception as e:
-        print(f"❌ Failed to sync guild commands: {e}")
+    for ext_name, cog in bot.cogs.items():
+        guild_id = getattr(cog, "GUILD_ID", None)
+        if guild_id is None:
+            continue
+
+        try:
+            guild_obj = discord.Object(id=guild_id)
+            await asyncio.wait_for(bot.tree.sync(guild=guild_obj), timeout=10)
+            print(f"✅ Commands synced for cog {ext_name} in guild {guild_id}")
+        except asyncio.TimeoutError:
+            print(f"⚠️ Command sync timed out for cog {ext_name} in guild {guild_id}")
+        except Exception as e:
+            print(f"❌ Failed to sync commands for cog {ext_name} in guild {guild_id}: {e}")
 
 @bot.event
 async def on_ready():
