@@ -1,4 +1,4 @@
-import { ping } from "../commands/utility/ping";
+import { ping } from '../commands/utility/ping';
 
 const commands = {
   ping,
