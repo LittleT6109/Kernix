@@ -1,12 +1,25 @@
 {
-  "name": "bot",
-  "module": "index.ts",
+  "name": "discord-typescript-bot-template",
   "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "sync": "bun run src/scripts/sync.ts"
+  },
   "private": true,
+  "author": {
+    "name": "LittleT6109",
+    "email": "littlet@littlet6109.com",
+    "url": "https://littlet6109.com"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/LittleT6109/discord-typescript-bot-template",
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "discord.js": "^14.27.0"
   }
 }
