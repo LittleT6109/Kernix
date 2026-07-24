@@ -1,6 +1,18 @@
 import { ping } from '../commands/utility/ping';
+import { ban, unban } from '../commands/moderation/ban';
+import { kick } from '../commands/moderation/kick';
+import { mute, unmute } from '../commands/moderation/mute';
+import { slow } from '../commands/moderation/slow';
 
 const commands = {
+  // moderation
+  ban,
+  unban,
+  kick,
+  mute,
+  unmute,
+  slow,
+  // utility
   ping,
   // TODO: Add more commands :P
 } as const;
