@@ -59,7 +59,7 @@ export const slow = {
       return interaction.reply({
         content: 'This is not a text channel.',
         flags: MessageFlags.Ephemeral,
-      })
+      });
     }
 
     await channel.setRateLimitPerUser(number, reason);
