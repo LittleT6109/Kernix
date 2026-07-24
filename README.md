@@ -1,15 +1,26 @@
-# bot
+# Discord TypeScript Bot Template
 
-To install dependencies:
+This is a simple bot built to be added onto and developed further. Or, if you wish, a standalone bot for server tasks.
 
+## Running
+
+To run this bot, you will need the following:
+- [Bun](https://bun.com/docs/installation)
+- NodeJS
+
+Install bot dependencies:
 ```bash
-bun install
+bun i
 ```
 
-To run:
+Create a file named .env.local with the template found in .env.local.example. Replace the values with your values.
 
+Sync the bot commands:
 ```bash
-bun run index.ts
+bun run sync
 ```
 
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Start the bot:
+```bash
+bun run start
+```
