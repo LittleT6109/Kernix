@@ -14,6 +14,12 @@ bun i
 ```
 
 Create a file named .env.local with the template found in .env.local.example. Replace the values with your values.
+<!-- TODO: Add instructions for getting the values -->
+
+Compile the files into JavaScript:
+```bash
+bun run build
+```
 
 Sync the bot commands:
 ```bash

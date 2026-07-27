@@ -1,5 +1,11 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { getCommands } from './utils/get-commands';
+import { syncCommands } from './scripts/sync';
+
+if (process.argv.includes('sync')) {
+  await syncCommands();
+  process.exit(0);
+}
 
 const { DISCORD_TOKEN } = process.env;
 if (!DISCORD_TOKEN) {
