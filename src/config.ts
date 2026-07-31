@@ -1,6 +1,7 @@
 export const config = {
   name: 'Kernix',
   server: '1517914109402808493',
-  manager: '987654321098765432',
+  manager: '1041510279634235483',
+  trusted: ['584481143802298380', '1156340470218235916'],
   prod: false,
-} as const;
+};

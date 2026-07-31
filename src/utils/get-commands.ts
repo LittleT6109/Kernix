@@ -3,6 +3,7 @@ import { ban, unban } from '../commands/moderation/ban';
 import { kick } from '../commands/moderation/kick';
 import { mute, unmute } from '../commands/moderation/mute';
 import { slow } from '../commands/moderation/slow';
+import { message } from '../commands/fun/message';
 
 const commands = {
   // moderation
@@ -14,6 +15,8 @@ const commands = {
   slow,
   // utility
   ping,
+  //fun
+  message
   // TODO: Add more commands :P
 } as const;
 
