@@ -6,6 +6,7 @@ import {
   ChannelType,
 } from 'discord.js';
 import { checkPermission } from '../../lib/permission';
+import { logger } from '../../lib/log';
 
 export const slow = {
   data: new SlashCommandBuilder()
@@ -65,7 +66,10 @@ export const slow = {
     await channel.setRateLimitPerUser(number, reason);
 
     await interaction.reply(
-      `${interaction.user.tag} set the slowmode time to "${number}" with reason "${reason}"`
+      `${interaction.user.tag} set the slowmode time to ${number} second(s) with reason "${reason}"`
+    );
+    logger(
+      `${interaction.user.username} set the slowmode time to ${number} second(s) in ${interaction.channel?.name} with reason "${reason}"`
     );
   },
 };

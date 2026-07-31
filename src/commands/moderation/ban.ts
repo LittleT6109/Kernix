@@ -5,6 +5,7 @@ import {
   MessageFlags,
 } from 'discord.js';
 import { checkPermission } from '../../lib/permission';
+import { logger } from '../../lib/log';
 
 export const ban = {
   data: new SlashCommandBuilder()
@@ -101,6 +102,9 @@ export const ban = {
     await interaction.reply(
       `${interaction.user.tag} banned ${targetUser.tag} with reason: "${reason}"`
     );
+    logger(
+      `${interaction.user.username} banned ${targetUser.username} with reason: "${reason}"`
+    );
   },
 };
 
@@ -193,6 +197,9 @@ export const unban = {
 
     await interaction.reply(
       `${interaction.user.tag} unbanned ${targetUser.tag} with reason: "${reason}"`
+    );
+    logger(
+      `${interaction.user.username} unbanned ${targetUser.username} with reason: "${reason}"`
     );
   },
 };

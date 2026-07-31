@@ -1,4 +1,5 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { logger } from './lib/log';
 import { getCommands } from './utils/get-commands';
 import { syncCommands } from './scripts/sync';
 
@@ -15,7 +16,7 @@ if (!DISCORD_TOKEN) {
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Logged in as ${readyClient.user.tag}`);
+  logger(`Logged in as ${readyClient.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -30,6 +31,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       content: 'That command does not exist.',
       ephemeral: true,
     });
+    logger.warn(`${interaction.user.username} tried to run command "/${interaction.commandName}", but it does not exist.`)
     return;
   }
 

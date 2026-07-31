@@ -5,6 +5,7 @@ import {
   MessageFlags,
 } from 'discord.js';
 import { checkPermission } from '../../lib/permission';
+import { logger } from '../../lib/log';
 
 export const kick = {
   data: new SlashCommandBuilder()
@@ -103,6 +104,9 @@ export const kick = {
 
     await interaction.reply(
       `${interaction.user.tag} kicked ${targetUser.tag} with reason: "${reason}"`
+    );
+    logger(
+      `${interaction.user.username} kicked ${targetUser.username} with reason: "${reason}"`
     );
   },
 };

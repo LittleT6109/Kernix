@@ -5,6 +5,7 @@ import {
   MessageFlags,
 } from 'discord.js';
 import { checkPermission } from '../../lib/permission';
+import { logger } from '../../lib/log';
 
 export const mute = {
   data: new SlashCommandBuilder()
@@ -106,6 +107,9 @@ export const mute = {
     await interaction.reply(
       `${interaction.user.tag} muted ${targetUser.tag} for ${durationMinutes} minutes with reason: "${reason}"`
     );
+    logger(
+      `${interaction.user.username} muted ${targetUser.username} for ${durationMinutes} with reason: "${reason}"`
+    );
   },
 };
 
@@ -199,6 +203,9 @@ export const unmute = {
 
     await interaction.reply(
       `${interaction.user.tag} unmuted ${targetUser.tag} with reason: "${reason}"`
+    );
+    logger(
+      `${interaction.user.username} unmuted ${targetUser.username} with reason: "${reason}"`
     );
   },
 };

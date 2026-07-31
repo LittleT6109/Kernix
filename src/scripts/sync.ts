@@ -1,6 +1,7 @@
 import { REST, Routes } from 'discord.js';
 import { getSlashCommands } from '../utils/get-commands';
 import { config } from '../config';
+import { logger } from '../lib/log';
 
 export async function syncCommands() {
   const { DISCORD_TOKEN, DISCORD_CLIENT_ID } = process.env;
@@ -12,7 +13,7 @@ export async function syncCommands() {
 
   const commands = getSlashCommands();
 
-  console.log(`Syncing ${commands.length} command(s)...`);
+  logger(`Syncing ${commands.length} command(s)...`);
 
   const rest = new REST().setToken(DISCORD_TOKEN);
 
@@ -21,5 +22,5 @@ export async function syncCommands() {
     { body: commands }
   );
 
-  console.log(`Registered ${commands.length} command(s).`);
+  logger(`Registered ${commands.length} command(s).`);
 }
