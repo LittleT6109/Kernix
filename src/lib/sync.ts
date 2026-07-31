@@ -1,7 +1,7 @@
 import { REST, Routes } from 'discord.js';
 import { getSlashCommands } from '../utils/get-commands';
 import { config } from '../config';
-import { logger } from '../lib/log';
+import { logger } from './log';
 
 export async function syncCommands() {
   const { DISCORD_TOKEN, DISCORD_CLIENT_ID } = process.env;

@@ -3,7 +3,6 @@
   "type": "module",
   "scripts": {
     "start": "bun run dist/bot.js",
-    "sync": "bun run dist/bot.js sync",
     "build": "src/scripts/build.sh",
     "format": "prettier --write .",
     "lint": "eslint ."
