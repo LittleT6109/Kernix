@@ -8,19 +8,31 @@ export async function syncCommands() {
   const DISCORD_GUILD_ID = config.server;
 
   if (!DISCORD_TOKEN || !DISCORD_CLIENT_ID) {
-    throw new Error('Set DISCORD_TOKEN, and DISCORD_CLIENT_ID in .env.local');
+    throw new Error('Set DISCORD_TOKEN and DISCORD_CLIENT_ID in .env.local');
   }
 
   const commands = getSlashCommands();
-
-  logger(`Syncing ${commands.length} command(s)...`);
-
   const rest = new REST().setToken(DISCORD_TOKEN);
 
-  await rest.put(
-    Routes.applicationGuildCommands(DISCORD_CLIENT_ID, DISCORD_GUILD_ID),
-    { body: commands }
-  );
+  const prod = config.prod;
+
+  if (!prod) {
+    if (!DISCORD_GUILD_ID) {
+      throw new Error('Set \'server\' in config.ts');
+    }
+
+    logger(`Syncing ${commands.length} command(s) to ${DISCORD_GUILD_ID}...`);
+    await rest.put(
+      Routes.applicationGuildCommands(DISCORD_CLIENT_ID, DISCORD_GUILD_ID),
+      { body: commands }
+    );
+  } else {
+    logger(`Syncing ${commands.length} command(s) to the global cache...`);
+    await rest.put(
+      Routes.applicationCommands(DISCORD_CLIENT_ID),
+      { body: commands }
+    );
+  }
 
   logger(`Registered ${commands.length} command(s).`);
 }
