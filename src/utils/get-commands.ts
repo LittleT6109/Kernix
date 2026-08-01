@@ -16,7 +16,7 @@ const commands = {
   // utility
   ping,
   //fun
-  message
+  message,
   // TODO: Add more commands :P
 } as const;
 

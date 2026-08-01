@@ -28,7 +28,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
       content: 'That command does not exist.',
       ephemeral: true,
     });
-    logger.warn(`${interaction.user.username} tried to run command "/${interaction.commandName}", but it does not exist.`)
+    logger.warn(
+      `${interaction.user.username} tried to run command "/${interaction.commandName}", but it does not exist.`
+    );
     return;
   }
 

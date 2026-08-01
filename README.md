@@ -31,6 +31,7 @@ I created this bot for tech-focused Discord servers. It includes the standard mo
 ## Running
 
 To run this bot, you will need the following:
+
 - [Bun](https://bun.com/docs/installation)
 - Git
 - NodeJS
@@ -47,21 +48,25 @@ Create `.env.local` using `.env.local.example` as a template, then add your [bot
 Edit `src/config.ts` to match your needs.
 
 Install bot dependencies:
+
 ```bash
 bun i
 ```
 
 Compile the files into JavaScript:
+
 ```bash
 bun run build
 ```
 
 Sync the bot commands:
+
 ```bash
 bun run sync
 ```
 
 Start the bot:
+
 ```bash
 bun run start
 ```
