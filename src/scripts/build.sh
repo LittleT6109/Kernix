@@ -9,3 +9,6 @@ bun build src/index.ts \
 
 # Copy the config into dist
 cp src/config.toml dist/
+
+# Copy the license into dist
+cp LICENSE dist/
