@@ -1,7 +1,13 @@
-export const config = {
-  name: 'Kernix',
-  server: '1517914109402808493',
-  manager: '1041510279634235483',
-  trusted: ['584481143802298380', '1156340470218235916'],
-  prod: false,
-};
+import { TOML } from 'bun';
+
+interface Config {
+  name: string;
+  server: string;
+  manager: string;
+  trusted: string[];
+  prod: boolean;
+}
+
+export const config = TOML.parse(
+  await Bun.file(new URL('./config.toml', import.meta.url)).text()
+) as Config;

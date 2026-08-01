@@ -18,7 +18,7 @@ export async function syncCommands() {
 
   if (!prod) {
     if (!DISCORD_GUILD_ID) {
-      throw new Error('Set \'server\' in config.ts');
+      throw new Error('Set \'server\' in config.toml');
     }
 
     logger(`Syncing ${commands.length} command(s) to ${DISCORD_GUILD_ID}...`);
