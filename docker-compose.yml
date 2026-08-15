@@ -1,0 +1,12 @@
+services:
+  kernix:
+    # image: ghcr.io/littlet6109/kernix:feat-docker-image
+    image: kernix
+    container_name: Kernix
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./kernix:/app/data:Z

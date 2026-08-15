@@ -12,6 +12,14 @@ if (!DISCORD_TOKEN) {
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+async function shutdown(signal: string) {
+  console.log(`\nReceived ${signal}, shutting down...`);
+
+  client.destroy();
+
+  process.exit(0);
+}
+
 client.once(Events.ClientReady, (readyClient) => {
   logger(`Logged in as ${readyClient.user.tag}`);
 });
@@ -28,7 +36,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
       content: 'That command does not exist.',
       ephemeral: true,
     });
-    logger.warn(`${interaction.user.username} tried to run command "/${interaction.commandName}", but it does not exist.`)
+    logger.warn(
+      `${interaction.user.username} tried to run command "/${interaction.commandName}", but it does not exist.`
+    );
     return;
   }
 
@@ -36,3 +46,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.login(DISCORD_TOKEN);
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

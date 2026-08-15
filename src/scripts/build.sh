@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
-# Grab environment variables
-source .env.local
-
-# Run Bun's build command, injecting the environment variables we grabbed
+# Run Bun's build command
 bun build src/index.ts \
   --outfile dist/bot.js \
-  --target node \
-  --minify \
-  --define "process.env.DISCORD_TOKEN='\"$DISCORD_TOKEN\"'" \
-  --define "process.env.DISCORD_CLIENT_ID='\"$DISCORD_CLIENT_ID\"'"
+  --target bun \
+  --minify
+
+# Bundle the default config alongside the built output so runtime can create data/config.toml
+mkdir -p dist/defaults
+cp src/config.toml dist/defaults/config.toml
+
+# Copy the license
+cp LICENSE dist

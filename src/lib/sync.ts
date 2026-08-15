@@ -18,7 +18,7 @@ export async function syncCommands() {
 
   if (!prod) {
     if (!DISCORD_GUILD_ID) {
-      throw new Error('Set \'server\' in config.ts');
+      throw new Error("Set 'server' in config.toml");
     }
 
     logger(`Syncing ${commands.length} command(s) to ${DISCORD_GUILD_ID}...`);
@@ -28,10 +28,9 @@ export async function syncCommands() {
     );
   } else {
     logger(`Syncing ${commands.length} command(s) to the global cache...`);
-    await rest.put(
-      Routes.applicationCommands(DISCORD_CLIENT_ID),
-      { body: commands }
-    );
+    await rest.put(Routes.applicationCommands(DISCORD_CLIENT_ID), {
+      body: commands,
+    });
   }
 
   logger(`Registered ${commands.length} command(s).`);
