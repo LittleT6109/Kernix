@@ -1,7 +1,6 @@
 services:
   kernix:
-    # image: ghcr.io/littlet6109/kernix:feat-docker-image
-    image: kernix
+    image: ghcr.io/littlet6109/kernix:latest
     container_name: Kernix
     restart: unless-stopped
 
