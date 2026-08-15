@@ -30,7 +30,45 @@ I created this bot for tech-focused Discord servers. It includes the standard mo
 
 ## Running
 
-To run this bot, you will need the following:
+## Linux
+
+### Docker
+
+You will need the following:
+
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/#plugin-linux-only)
+
+Download the Docker Compose file:
+
+```bash
+curl -L -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
+```
+
+or
+
+```bash
+curl -L -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
+```
+
+Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
+
+Start the Docker container:
+
+```bash
+docker compose up -d
+```
+
+Edit `kernix/config.toml` to match your needs, then restart the bot.
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+### Bun
+
+You will need the following:
 
 - [Bun](https://bun.com/docs/installation)
 - Git
@@ -43,33 +81,66 @@ git clone https://github.com/LittleT6109/Kernix
 cd Kernix
 ```
 
-Create `.env.local` using `.env.local.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
-
-Edit `src/config.ts` to match your needs.
-
-Install bot dependencies:
+Install dependencies:
 
 ```bash
 bun i
 ```
 
-Compile the files into JavaScript:
+Build the bot:
 
 ```bash
 bun run build
 ```
 
-Sync the bot commands:
+Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
 
-```bash
-bun run sync
-```
-
-Start the bot:
+Run the bot:
 
 ```bash
 bun run start
 ```
+
+Edit `dist/data/config.toml` to match your needs, then restart the bot.
+
+## Windows
+
+Docker Compose CLI is only available on Linux, so you must use the Bun method here.
+
+You will need the following:
+
+- [Bun](https://bun.com/docs/installation)
+- Git
+- NodeJS
+
+Clone the repository:
+
+```bash
+git clone https://github.com/LittleT6109/Kernix
+cd Kernix
+```
+
+Install dependencies:
+
+```bash
+bun i
+```
+
+Build the bot:
+
+```bash
+bun run build
+```
+
+Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
+
+Run the bot:
+
+```bash
+bun run start
+```
+
+Edit `dist/data/config.toml` to match your needs, then restart the bot.
 
 ## Getting Bot Credentials
 
