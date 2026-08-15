@@ -1,9 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -16,17 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create source tarball
-        run: |
-          tar -czf kernix-${{ github.ref_name }}.tar.gz \
-            --exclude=.git \
-            .
-
-      - name: Create GitHub Release
+      - name: Upload Docker Compose file
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
-            "kernix-${{ github.ref_name }}.tar.gz" \
-            "docker-compose.yml" \
-            --generate-notes
+          gh release upload "${{ github.event.release.tag_name }}" \
+            "docker-compose.yml"
