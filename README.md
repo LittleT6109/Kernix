@@ -48,7 +48,7 @@ curl -L -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker
 or
 
 ```bash
-curl -L -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
+wget -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
 ```
 
 Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
