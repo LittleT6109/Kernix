@@ -7,8 +7,9 @@ bun build src/index.ts \
   --target bun \
   --minify
 
-# Copy the config into dist
-cp src/config.toml dist/
+# Bundle the default config alongside the built output so runtime can create data/config.toml
+mkdir -p dist/defaults
+cp src/config.toml dist/defaults/config.toml
 
-# Copy the license into dist
-cp LICENSE dist/
+# Copy the license
+cp LICENSE dist

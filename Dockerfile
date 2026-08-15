@@ -16,10 +16,9 @@ FROM oven/bun:1-slim
 
 WORKDIR /app
 
-# Needed so `bun run start` works
-COPY --from=builder /app/package.json ./
-
 # Copy only the built output
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist ./
 
-CMD ["bun", "run", "start"]
+RUN chmod -R 777 /app
+
+CMD ["bun", "bot.js"]
