@@ -24,7 +24,8 @@ I created this bot for tech-focused Discord servers. It includes the standard mo
   | ------------------------------------------ | ---------------------------------------------- |
   | Message                                    | Send a message as the bot (Trusted users only) |
   | Slow                                       | Set the channel slowmode                       |
-  | Along with the standard moderation toolset |
+
+  Along with the standard moderation toolset
 
 ## Running
 
@@ -46,7 +47,7 @@ curl -L -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker
 or
 
 ```bash
-wget -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
+wget https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
 ```
 
 Create `.env` using `.env.example` as a template, then set your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials), and NTFY credentials if using.
