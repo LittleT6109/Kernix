@@ -2,18 +2,29 @@ import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { logger } from './lib/log';
 import { getCommands } from './utils/get-commands';
 import { syncCommands } from './lib/sync';
+import { startDMSwitch, cancelDMSwitch } from './lib/dmswitch';
+import { config } from './config';
 
 syncCommands();
+if (config.ntfy_enabled) {
+  logger('Starting uptime heartbeat...');
+  startDMSwitch();
+}
 
 const { DISCORD_TOKEN } = process.env;
 if (!DISCORD_TOKEN) {
-  throw new Error('Set DISCORD_TOKEN in .env.local');
+  throw new Error('Set DISCORD_TOKEN in .env');
 }
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 async function shutdown(signal: string) {
-  console.log(`\nReceived ${signal}, shutting down...`);
+  console.log('\n');
+  logger(`Received ${signal}, shutting down...`);
+  if (config.ntfy_enabled) {
+    logger("Stopping uptime heartbeat (won't notify)...");
+    await cancelDMSwitch();
+  }
 
   client.destroy();
 

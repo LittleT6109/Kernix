@@ -17,16 +17,14 @@
 
 I created this bot for tech-focused Discord servers. It includes the standard moderation commands you'd expect, along with fun and useful utilities aimed at developers and enthusiasts.
 
-## Roadmap
+## Features
 
-- [ ] Add RSS feed tracking
-- [ ] Add optional AI command
-- [ ] Improve moderation system
-  - [ ] Add warn system
-  - [ ] Add action logging to user-configured channel
-  - [ ] Add message delete/edit logging
-- [ ] Add customizable welcome messages
-- [ ] Add webpage with OAuth for users to change configuration, and other features
+- Commands:
+  | Command                                    | Description                                    |
+  | ------------------------------------------ | ---------------------------------------------- |
+  | Message                                    | Send a message as the bot (Trusted users only) |
+  | Slow                                       | Set the channel slowmode                       |
+  | Along with the standard moderation toolset |
 
 ## Running
 
@@ -51,7 +49,7 @@ or
 wget -O https://github.com/LittleT6109/Kernix/releases/latest/download/docker-compose.yml
 ```
 
-Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
+Create `.env` using `.env.example` as a template, then set your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials), and NTFY credentials if using.
 
 Start the Docker container:
 
@@ -93,7 +91,7 @@ Build the bot:
 bun run build
 ```
 
-Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
+Create `.env` using `.env.example` as a template, then set your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials), and NTFY credentials if using.
 
 Run the bot:
 
@@ -132,7 +130,7 @@ Build the bot:
 bun run build
 ```
 
-Create `.env` using `.env.example` as a template, then add your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials).
+Create `.env` using `.env.example` as a template, then set your [bot credentials](https://github.com/LittleT6109/Kernix#getting-bot-credentials), and NTFY credentials if using.
 
 Run the bot:
 
@@ -146,6 +144,19 @@ Edit `dist/data/config.toml` to match your needs, then restart the bot.
 
 1. Go to https://discord.com/developers/applications
 2. Create a new application
-3. Copy the Application ID into `.env.local`
+3. Copy the Application ID into `.env`
 4. Open the Bot tab and reset the token, copy it
-5. Add the token to `.env.local`
+5. Add the token to `.env`
+
+<!-- TODO: Add instructions to get NTFY credentials, along with how to set up self-hosted NTFY -->
+
+## Roadmap
+
+- [ ] Add RSS feed tracking
+- [ ] Add optional AI command
+- [ ] Improve moderation system
+  - [ ] Add warn system
+  - [ ] Add action logging to user-configured channel
+  - [ ] Add message delete/edit logging
+- [ ] Add customizable welcome messages
+- [ ] Add webpage with OAuth for users to change configuration, and other features

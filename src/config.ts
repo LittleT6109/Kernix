@@ -5,11 +5,15 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 interface Config {
+  // Discord related
   name: string;
   server: string;
   manager: string;
   trusted: string[];
   prod: boolean;
+  // Other settings
+  ntfy_url: string;
+  ntfy_enabled: boolean;
 }
 
 const configUrl = new URL('./data/config.toml', import.meta.url);
