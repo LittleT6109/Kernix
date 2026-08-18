@@ -20,10 +20,11 @@ I created this bot for tech-focused Discord servers. It includes the standard mo
 ## Features
 
 - Commands:
-  | Command                                    | Description                                    |
-  | ------------------------------------------ | ---------------------------------------------- |
-  | Message                                    | Send a message as the bot (Trusted users only) |
-  | Slow                                       | Set the channel slowmode                       |
+
+  | Command | Description                                    |
+  | ------- | ---------------------------------------------- |
+  | Message | Send a message as the bot (Trusted users only) |
+  | Slow    | Set the channel slowmode                       |
 
   Along with the standard moderation toolset
 
